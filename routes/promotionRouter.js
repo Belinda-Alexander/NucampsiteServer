@@ -53,7 +53,7 @@ promotionRouter.route('/:promotionId')
     res.end(`POST operation not supported on /promotions/${req.params.promotionId}`);
 })
 .put((req, res, next) => {
-    Partner.findByIdAndUpdate(req.params.partnerId, {
+    Promotion.findByIdAndUpdate(req.params.promotionId, {
         $set: req.body
     }, {new: true})
     .then(promotion => {

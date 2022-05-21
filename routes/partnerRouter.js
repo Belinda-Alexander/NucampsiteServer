@@ -63,7 +63,7 @@ partnerRouter.route('/:partnerId')
     .catch(err => next(err));
 })
 .delete((req, res, next) => {
-    Campsite.findByIdAndDelete(req.params.campsiteId)
+    Partner.findByIdAndDelete(req.params.partnerId)
     .then(response => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
