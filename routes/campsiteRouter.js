@@ -160,8 +160,7 @@ campsiteRouter.route('/:campsiteId/comments/:commentId')
                 err = new Error('You are not authorized!');
                 err.status = 403;
                 return next(err);
-            }
-            */
+            } */
         } else if (!campsite) {
             err = new Error(`Campsite ${req.params.campsiteId} not found`);
             err.status = 404;
@@ -182,30 +181,25 @@ campsiteRouter.route('/:campsiteId/comments/:commentId')
     Campsite.findById(req.params.campsiteId)
     .then(campsite => {
         if (campsite && campsite.comments.id(req.params.commentId)) {
-            if (req.body.rating) {
-                campsite.comments.id(req.params.commentId).rating = req.body.rating;
-            }
-            if (req.body.text) {
-                campsite.comments.id(req.params.commentId).text = req.body.text;
-            }
-            campsite.save()
-            .then(campsite => {
+            if (campsite && campsite.comments.id(req.params.commentId)) {
                 const id1 = req.user._id;
                 const id2 = campsite.comments.id(req.params.commentId).author;
-                if(id1.equals(id2)) {  
-                    res.statusCode = 200;
-                    res.setHeader('Content-Type', 'application/json');
-                    res.json(campsite.comments.id(req.params.commentId));
-                } else {
-                    err = new Error('You are not authorized!');
-                    err.status = 403;
-                    return next(err);
+                if(id1.equals(id2)) {
+                    if (req.body.rating) {
+                        campsite.comments.id(req.params.commentId).rating = req.body.rating;
+                    }
+                    if (req.body.text) {
+                        campsite.comments.id(req.params.commentId).text = req.body.text;
+                    }
+                    campsite.save()
+                    .then(campsite => {
+                        res.statusCode = 200;
+                        res.setHeader('Content-Type', 'application/json');
+                        res.json(campsite);
+                    })
+                    .catch(err => next(err));
                 }
-                //res.statusCode = 200;
-                //res.setHeader('Content-Type', 'application/json');
-                //res.json(campsite);
-            })
-            .catch(err => next(err));
+            }
         } else if (!campsite) {
             err = new Error(`Campsite ${req.params.campsiteId} not found`);
             err.status = 404;
@@ -222,25 +216,22 @@ campsiteRouter.route('/:campsiteId/comments/:commentId')
     Campsite.findById(req.params.campsiteId)
     .then(campsite => {
         if (campsite && campsite.comments.id(req.params.commentId)) {
-            campsite.comments.id(req.params.commentId).remove();
-            campsite.save()
-            .then(campsite => {
-                const id1 = req.user._id;
-                const id2 = campsite.comments.id(req.params.commentId).author;
-                if(id1.equals(id2)) {  
+            const id1 = req.user._id;
+            const id2 = campsite.comments.id(req.params.commentId).author;
+            if(id1.equals(id2)) {
+                campsite.comments.id(req.params.commentId).remove();
+                campsite.save()
+                .then(campsite => { 
                     res.statusCode = 200;
                     res.setHeader('Content-Type', 'application/json');
-                    res.json(campsite.comments.id(req.params.commentId));
-                } else {
+                    res.json(campsite);
+                })
+                .catch(err => next(err));
+            } else {
                     err = new Error('You are not authorized!');
                     err.status = 403;
-                    return next(err);
-                }
-                //res.statusCode = 200;
-                //res.setHeader('Content-Type', 'application/json');
-                //res.json(campsite);
-            })
-            .catch(err => next(err));
+                    return next(err);   
+            }
         } else if (!campsite) {
             err = new Error(`Campsite ${req.params.campsiteId} not found`);
             err.status = 404;

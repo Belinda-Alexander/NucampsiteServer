@@ -33,13 +33,15 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
+
+
 /**
  * Create HTTPS server. 
  */
 
-const options = {
+ const options = {
   key: fs.readFileSync(__dirname+'/server.key'),
-  cer: fs.readFileSync(__dirname+'/server.cert')
+  cert: fs.readFileSync(__dirname+'/server.cert')
 };
 
 const secureServer = https.createServer(options, app);
@@ -49,10 +51,10 @@ const secureServer = https.createServer(options, app);
  */
 
  secureServer.listen(app.get('secPort'), () => {
-   console.log('Server listening on port', app.get('secPort'));
- });
- secureServer.on('error', onError);
- secureServer.on('listening', onListening);
+  console.log('Server listening on port', app.get('secPort'));
+});
+secureServer.on('error', onError);
+secureServer.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
